@@ -67,7 +67,7 @@ abstract class RedisStorage implements StorageInterface
         }
 
         $this->redis->set(
-            $this->getRedisKey($data->id),
+            $this->getRedisKey($data->id, $options['scope'] ?? null),
             json_encode($data->body),
             $redisOptions
         );
@@ -80,7 +80,7 @@ abstract class RedisStorage implements StorageInterface
 
     public function delete(string $id, array $options = []): void
     {
-        $this->redis->del($this->getRedisKey($id));
+        $this->redis->del($this->getRedisKey($id, $options['scope'] ?? null));
     }
 
     abstract public function keyPrefix(): string;
@@ -92,11 +92,11 @@ abstract class RedisStorage implements StorageInterface
         return null;
     }
 
-    protected function getRedisKey(string $id): string
+    protected function getRedisKey(string $id, ?string $scope = null): string
     {
         return implode(':', array_filter([
             $this->keyPrefix(),
-            $this->scope(),
+            $scope ?? $this->scope(),
             $id
         ]));
     }

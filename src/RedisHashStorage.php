@@ -59,7 +59,7 @@ abstract class RedisHashStorage implements StorageInterface
     public function insert(StorageData $data, array $options = []): void
     {
         $this->redis->hSet(
-            $this->getRedisKey(),
+            $this->getRedisKey($options['scope'] ?? null),
             $data->id,
             json_encode($data->body),
         );
@@ -72,18 +72,18 @@ abstract class RedisHashStorage implements StorageInterface
 
     public function delete(string $id, array $options = []): void
     {
-        $this->redis->hDel($this->getRedisKey(), $id);
+        $this->redis->hDel($this->getRedisKey($options['scope'] ?? null), $id);
     }
 
     abstract public function keyPrefix(): string;
 
     abstract public function scope(): ?string;
 
-    protected function getRedisKey(): string
+    protected function getRedisKey(?string $scope = null): string
     {
         return implode(':', array_filter([
             $this->keyPrefix(),
-            $this->scope(),
+            $scope ?? $this->scope(),
         ]));
     }
 
