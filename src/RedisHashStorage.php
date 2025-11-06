@@ -13,7 +13,7 @@ use Redis;
 abstract class RedisHashStorage implements StorageInterface
 {
 
-    private Redis $redis;
+    protected Redis $redis;
 
     public function __construct(Redis $redis)
     {
